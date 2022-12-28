@@ -1,0 +1,56 @@
+server:
+  # 端口
+  port: 8222
+
+# spring 配置
+spring:
+  application:
+    # 服务名称
+    name: user-center
+  profiles:
+    # 环境
+    active: dev
+  sleuth:
+    sampler:
+      # 日志数据采样百分比
+      rate: 100
+  # zipkin 配置
+  zipkin:
+    # 服务端地址
+    base-url: http://106.15.235.147:9411
+    discovery-client-enabled: false
+  cloud:
+    # nacos 配置
+    nacos:
+      # 注册中心
+      discovery:
+        server-addr: 106.15.235.147:8848
+        namespace: c3d4938d-9fbb-4469-9828-f4c7750d6501
+        group: CLOUD_GROUP
+      # 配置中心
+      config:
+        server-addr: 106.15.235.147:8848
+        namespace: c3d4938d-9fbb-4469-9828-f4c7750d6501
+        group: CLOUD_GROUP
+        file-extension: yaml
+
+mica:
+  # xss 防护配置
+  xss:
+    enabled: false
+    # 模式：clear=清理、escape=转义
+    mode: escape
+    # 拦截路由
+    path-patterns: /**
+    # 放行路由
+    path-exclude-patterns:
+
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} -%5p ${PID:- } [%15.15t] - [${spring.application.name}, %X{traceId:-}, %X{spanId:-}] %-40.40logger{39} %line: %m%n"
+
+# 自定义配置
+custom:
+  filter:
+    # traceId 拦截
+    trace-id-enable: true

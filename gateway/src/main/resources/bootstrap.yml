@@ -1,0 +1,75 @@
+# 端口
+server:
+  port: 8111
+
+# spring 配置
+spring:
+  application:
+    # 服务名称
+    name: gateway
+  profiles:
+    # 环境
+    active: dev
+  main:
+    # 指定处理模型
+    web-application-type: reactive
+  # sleuth 配置
+  sleuth:
+    reactor:
+      # 链路追踪模式
+      instrumentation-type: decorate_on_each
+    sampler:
+      # 日志数据采样百分比
+      rate: 100
+  # zipkin 配置
+  zipkin:
+    # 服务端地址
+    base-url: http://106.15.235.147:9411
+    discovery-client-enabled: false
+  cloud:
+    # nacos 配置
+    nacos:
+      # 注册中心
+      discovery:
+        server-addr: 106.15.235.147:8848
+        namespace: c3d4938d-9fbb-4469-9828-f4c7750d6501
+        group: CLOUD_GROUP
+      # 配置中心
+      config:
+        server-addr: 106.15.235.147:8848
+        namespace: c3d4938d-9fbb-4469-9828-f4c7750d6501
+        group: CLOUD_GROUP
+        file-extension: yaml
+    # 网关配置
+    gateway:
+      discovery:
+        # 动态路由
+        locator:
+          # 根据服务名自动转发
+          enabled: true
+          # 服务名小写
+          lower-case-service-id: true
+      # 静态路由
+      routes:
+        # 服务名方式
+        - id: server-name-test
+          uri: lb://user-center
+          predicates:
+            - Path=/test/index/{param}
+          filters:
+            - AddRequestParameter=name,tom
+        # http 方式
+        - id: http-test
+          uri: http://127.0.0.1:8222
+          predicates:
+            - Path=/test/main/{param}
+
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} -%5p ${PID:- } [%15.15t] - [${spring.application.name}, %X{traceId:-}, %X{spanId:-}] %-40.40logger{39} %line: %m%n"
+
+# 自定义配置
+custom:
+  gateway:
+    # 网关日志类型
+    log-type: 2
