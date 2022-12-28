@@ -25,12 +25,12 @@ spring:
       # 注册中心
       discovery:
         server-addr: 106.15.235.147:8848
-        namespace: c3d4938d-9fbb-4469-9828-f4c7750d6501
+        namespace: c7c52262-f683-4485-b9e0-893607641755
         group: CLOUD_GROUP
       # 配置中心
       config:
         server-addr: 106.15.235.147:8848
-        namespace: c3d4938d-9fbb-4469-9828-f4c7750d6501
+        namespace: c7c52262-f683-4485-b9e0-893607641755
         group: CLOUD_GROUP
         file-extension: yaml
 
