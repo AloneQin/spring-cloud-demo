@@ -27,6 +27,7 @@
         <jackson-core.version>2.13.4</jackson-core.version>
         <jackson-databind.version>2.13.4.2</jackson-databind.version>
         <jackson-annotations.version>2.13.4</jackson-annotations.version>
+        <jasypt.version>3.0.5</jasypt.version>
     </properties>
 
     <packaging>pom</packaging>
@@ -85,6 +86,14 @@
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>
                 <version>${jackson-annotations.version}</version>
+                <scope>import</scope>
+            </dependency>
+
+            <!--jasypt-->
+            <dependency>
+                <groupId>com.github.ulisesbocchio</groupId>
+                <artifactId>jasypt-spring-boot-starter</artifactId>
+                <version>${jasypt.version}</version>
                 <scope>import</scope>
             </dependency>
         </dependencies>

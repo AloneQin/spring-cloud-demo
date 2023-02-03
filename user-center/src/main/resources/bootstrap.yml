@@ -33,6 +33,21 @@ spring:
         namespace: c7c52262-f683-4485-b9e0-893607641755
         group: CLOUD_GROUP
         file-extension: yaml
+  redis:
+    host: 106.15.235.147
+    port: 6379
+    password: ENC(KZrt6wtm/IBJm6xArKpHnNBHjewIiaK4lXv5gyte0/cCvaKFXuO/IjDLl6FIY/c6)
+    lettuce:
+      pool:
+        enabled: true
+        # 连接池最大连接数
+        max-active: 8
+        # 连接池最大空闲连接数
+        max-idle: 8
+        # 连接池最小空闲连接数
+        min-idle: 0
+        # 连接池最大阻塞等待时间
+        max-wait: -1
 
 mica:
   # xss 防护配置
