@@ -4,10 +4,10 @@ import com.example.common.response.DefaultResponse;
 import com.example.common.response.ReturnCodeEnum;
 import com.example.common.utils.AssertUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.repository.query.Param;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -47,5 +47,20 @@ public class TestController {
     public String testXss(String input) {
         log.info("#testXss: {}", input);
         return input;
+    }
+
+    @PostMapping(value = "/testFormData")
+    public String testFormData(String a, String b) {
+        return a + ":" + b;
+    }
+
+    @PostMapping(value = "/testForm")
+    public String testForm(@Param("a") String a, @Param("a") String b) {
+        return a + ":" + b;
+    }
+
+    @PostMapping("/testJson")
+    public String testJson(@RequestBody Map<String, String> map) {
+        return map.toString();
     }
 }

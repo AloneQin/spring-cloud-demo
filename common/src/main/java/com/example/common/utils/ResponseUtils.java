@@ -22,7 +22,7 @@ public class ResponseUtils {
      * @param statusCode http 状态码
      * @param contentType 响应内容类型
      * @param content 主体信息
-     * @throws IOException
+     * @throws IOException 异常抛出，以便处理
      */
     public static void output(HttpServletResponse response, Integer statusCode, String contentType, String content) throws IOException {
         response.setStatus(statusCode);
@@ -48,11 +48,7 @@ public class ResponseUtils {
         response.addHeader("Content-Disposition", "attachment;fileName=" + URLEncoder.encode(fileName, "utf-8"));
         // IO操作
         byte[] buffer = new byte[1024 * 10];
-        BufferedInputStream bis = null;
-        ServletOutputStream sos = null;
-        try {
-            bis = new BufferedInputStream(inputStream);
-            sos = response.getOutputStream();
+        try (BufferedInputStream bis = new BufferedInputStream(inputStream); ServletOutputStream sos = response.getOutputStream()) {
             int i = -1;
             while ((i = bis.read(buffer)) != -1) {
                 sos.write(buffer, 0, i);
@@ -61,12 +57,6 @@ public class ResponseUtils {
         } finally {
             if (inputStream != null) {
                 inputStream.close();
-            }
-            if (bis != null) {
-                bis.close();
-            }
-            if (sos != null) {
-                sos.close();
             }
         }
     }
@@ -89,7 +79,7 @@ public class ResponseUtils {
      * @param obj 目标对象
      * @param fileName 文件名称
      * @param response HttpServletResponse
-     * @throws Exception
+     * @throws Exception 异常抛出，以便处理
      */
     public static void fileDownloadByObj(Object obj, String fileName, HttpServletResponse response) throws Exception {
         String jsonStr = JacksonUtils.toStringKeepNull(obj);

@@ -1,5 +1,6 @@
 package com.example.demo.gateway.filter;
 
+import com.example.demo.gateway.common.constants.enums.FilterOrderEnum;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +21,7 @@ import reactor.core.publisher.Mono;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.Optional;
 
 /**
  * 网关日志过滤器
@@ -32,6 +34,8 @@ public class GatewayLogFilter implements GlobalFilter, Ordered {
 
     @Value("${custom.gateway.log-type}")
     private Integer gatewayLogType;
+
+    private static final String KEY_GATEWAY_LOG_TYPE = "gateway-log-type";
 
     private final Tracer tracer;
 
@@ -48,6 +52,14 @@ public class GatewayLogFilter implements GlobalFilter, Ordered {
         URI forwardUri = exchange.getAttribute(ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR);
         String traceId = getTraceId();
 
+        Integer logType = Optional.ofNullable(request.getQueryParams()
+                .getFirst(KEY_GATEWAY_LOG_TYPE))
+                .map(Integer::valueOf)
+                .orElse(gatewayLogType);
+
+        System.out.println(request.getPath());
+        System.out.println(request.getURI().getPath());
+
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("\n----------------------------------- Gateway Logs -----------------------------------");
         stringBuilder.append("\n[Request]");
@@ -63,33 +75,33 @@ public class GatewayLogFilter implements GlobalFilter, Ordered {
         stringBuilder.append("\n--Route Predicate   : {}");
         stringBuilder.append("\n--Route Filter      : {}");
 
-        ArrayList<Object> argList = new ArrayList<>();
+        ArrayList<String> argList = new ArrayList<>();
         argList.add(traceId);
         argList.add(request.getId());
         argList.add(request.getMethodValue());
         argList.add(originalUri.toString());
-        argList.add(forwardUri.toString());
-        argList.add(exchange.getResponse().getStatusCode());
-        argList.add(route.getId());
-        argList.add(route.getUri().toString());
-        argList.add(route.getPredicate().toString());
-        argList.add(route.getFilters().toString());
+        argList.add(forwardUri != null ? forwardUri.toString() : null);
+        argList.add(String.valueOf(exchange.getResponse().getStatusCode()));
+        argList.add(route != null ? route.getId() : null);
+        argList.add(route != null ? route.getUri().toString() : null);
+        argList.add(route != null ? route.getPredicate().toString() : null);
+        argList.add(route != null ? route.getFilters().toString() : null);
 
         Mono<Void> mono = chain.filter(exchange);
 
-        if (GatewayLogTypeEnum.IGNORE_RESPONSE.value.equals(gatewayLogType)
-                || GatewayLogTypeEnum.SPLIT_RESPONSE.value.equals(gatewayLogType)) {
+        if (GatewayLogTypeEnum.IGNORE_RESPONSE.value.equals(logType)
+                || GatewayLogTypeEnum.SPLIT_RESPONSE.value.equals(logType)) {
             stringBuilder.append("\n------------------------------------------------------------------------------------");
             log.info(stringBuilder.toString(), argList.toArray());
         }
 
-        if (GatewayLogTypeEnum.MERGE_RESPONSE.value.equals(gatewayLogType)
-                || GatewayLogTypeEnum.SPLIT_RESPONSE.value.equals(gatewayLogType)) {
+        if (GatewayLogTypeEnum.MERGE_RESPONSE.value.equals(logType)
+                || GatewayLogTypeEnum.SPLIT_RESPONSE.value.equals(logType)) {
             mono = mono.then(
                     Mono.fromRunnable(() -> {
-                        if (GatewayLogTypeEnum.SPLIT_RESPONSE.value.equals(gatewayLogType)) {
+                        if (GatewayLogTypeEnum.SPLIT_RESPONSE.value.equals(logType)) {
                             stringBuilder.delete(0, stringBuilder.length());
-                            argList.removeAll(argList);
+                            argList.clear();
                             stringBuilder.append("\n----------------------------------- Gateway Logs -----------------------------------");
                         }
                         stringBuilder.append("\n[Response]");
@@ -100,11 +112,11 @@ public class GatewayLogFilter implements GlobalFilter, Ordered {
                         stringBuilder.append("\n------------------------------------------------------------------------------------");
 
                         ServerHttpResponse response = exchange.getResponse();
-                        float totalTime = (System.currentTimeMillis() - startTime)/1000.00f;
+                        float totalTime = (System.currentTimeMillis() - startTime) / 1000.00f;
                         argList.add(traceId);
                         argList.add(exchange.getRequest().getId());
-                        argList.add(response.getStatusCode().toString());
-                        argList.add(totalTime);
+                        argList.add(String.valueOf(response.getStatusCode()));
+                        argList.add(String.valueOf(totalTime));
                         log.info(stringBuilder.toString(), argList.toArray());
                     })
             );
@@ -114,7 +126,7 @@ public class GatewayLogFilter implements GlobalFilter, Ordered {
 
     @Override
     public int getOrder() {
-        return Ordered.LOWEST_PRECEDENCE;
+        return FilterOrderEnum.GATEWAY_LOG.value;
     }
 
     private String getTraceId() {
@@ -148,6 +160,6 @@ public class GatewayLogFilter implements GlobalFilter, Ordered {
         SPLIT_RESPONSE(3),
         ;
 
-        public Integer value;
+        public final Integer value;
     }
 }

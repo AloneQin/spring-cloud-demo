@@ -1,6 +1,7 @@
 package com.example.common.exception;
 
 import com.example.common.response.DefaultResponse;
+import com.example.common.response.ReturnCode;
 import com.example.common.response.ReturnCodeEnum;
 import lombok.Getter;
 
@@ -10,22 +11,26 @@ import lombok.Getter;
 @Getter
 public class BaseException extends RuntimeException {
 
-    private DefaultResponse defaultResponse;
+    private DefaultResponse<?> defaultResponse;
 
     private BaseException(String message) {
         super(message);
     }
 
-    public BaseException(DefaultResponse defaultResponse) {
+    public <T> BaseException(DefaultResponse<T> defaultResponse) {
         this(defaultResponse.detailMessage());
         this.defaultResponse = defaultResponse;
     }
 
-    public BaseException(ReturnCodeEnum returnCodeEnum) {
-        this(DefaultResponse.fail(returnCodeEnum));
+    public BaseException(ReturnCode returnCode) {
+        this(DefaultResponse.fail(returnCode));
     }
 
-    public BaseException(String code, String message, Object content) {
+    public BaseException(ReturnCodeEnum returnCodeEnum, String message) {
+        this(returnCodeEnum.getCode(), returnCodeEnum.getMessage() + ": " + message, null);
+    }
+
+    public <T> BaseException(String code, String message, T content) {
         this(DefaultResponse.fail(code, message, content));
     }
 }

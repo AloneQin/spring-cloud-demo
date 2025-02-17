@@ -33,7 +33,8 @@ public class GlobalExceptionHandler extends DefaultErrorWebExceptionHandler {
     private final Tracer tracer;
 
     public GlobalExceptionHandler(ErrorAttributes errorAttributes, WebProperties.Resources resources,
-                                  ErrorProperties errorProperties, ApplicationContext applicationContext, Tracer tracer) {
+                                  ErrorProperties errorProperties, ApplicationContext applicationContext,
+                                  Tracer tracer) {
         super(errorAttributes, resources, errorProperties, applicationContext);
         this.tracer = tracer;
     }
@@ -69,7 +70,7 @@ public class GlobalExceptionHandler extends DefaultErrorWebExceptionHandler {
          */
         Map<String, Object> errorMap = getErrorAttributes(request, getErrorAttributeOptions(request, MediaType.ALL));
         HttpStatus httpStatus;
-        DefaultResponse defaultResponse;
+        DefaultResponse<?> defaultResponse;
         Throwable throwable = super.getError(request);
         log.error("#catch exception", throwable);
         if (throwable instanceof BaseException) {

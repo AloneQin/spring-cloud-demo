@@ -1,5 +1,6 @@
 package com.example.common.response;
 
+import com.example.common.config.ApplicationConfigContext;
 import com.example.common.utils.JacksonUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -34,10 +35,16 @@ public class DefaultResponse<T> {
      */
     private String traceId;
 
+    /**
+     * 应用名称
+     */
+    private String application;
+
     private DefaultResponse(String code, String message, T content) {
         this.code = code;
         this.message = message;
         this.content = content;
+        this.application = ApplicationConfigContext.applicationName();
     }
 
     public static <T> DefaultResponse<T> success(T content) {
@@ -79,14 +86,11 @@ public class DefaultResponse<T> {
     }
 
     /**
-     * 检查响应信息是否是{@code "执行成功"}
+     * 检查响应信息是否是{@code 执行成功}
      * @param defaultResponse 目标响应信息
-     * @return {@code true}=是，{@code false}=否
+     * @return {@code true}=是、{@code false}=否
      */
-    public static boolean successful(DefaultResponse defaultResponse) {
-        if (defaultResponse != null && ReturnCodeEnum.SUCCESS.getCode().equals(defaultResponse.getCode())) {
-            return true;
-        }
-        return false;
+    public static <T> boolean successful(DefaultResponse<T> defaultResponse) {
+        return defaultResponse != null && ReturnCodeEnum.SUCCESS.getCode().equals(defaultResponse.getCode());
     }
 }

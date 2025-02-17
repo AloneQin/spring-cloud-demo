@@ -73,24 +73,39 @@ public class StringUtils {
 	/**
 	 * 字符串判空
 	 * @param str 待判定字符串
-	 * @return
+	 * @return true or false
 	 */
-	public static boolean isBlank(String str) {
-		if (str == null || str.length() == 0) {
-			return true;
-		}
-		return false;
-	}
+	public static boolean isEmpty(String str) {
+        return str == null || str.isEmpty();
+    }
 
 	/**
 	 * 字符串判非空
 	 * @param str 待判定字符串
-	 * @return
+	 * @return true or false
+	 */
+	public static boolean nonEmpty(String str) {
+		return !isEmpty(str);
+	}
+
+	/**
+	 * 字符串判空，包含全空格
+	 * @param str 待判定字符串
+	 * @return true or false
+	 */
+	public static boolean isBlank(String str) {
+		return isEmpty(str) || str.trim().isEmpty();
+	}
+
+	/**
+	 * 字符串判非空，包含全非空格
+	 * @param str 待判定字符串
+	 * @return true or false
 	 */
 	public static boolean nonBlank(String str) {
-		return !isBlank(str);
-	}
-	
+        return !isBlank(str);
+    }
+
 	/**
 	 * 格式化sql，去除模板引擎中的制表符\t与换行符\n
 	 */

@@ -41,7 +41,7 @@ public class DefaultFilter implements Filter {
         String uri = request.getRequestURI();
         String contentType = request.getContentType();
         String traceId = request.getHeader(TRACE_ID);
-        if (StringUtils.isBlank(traceId) && customFilterProperties.getTraceIdEnable()) {
+        if (StringUtils.isEmpty(traceId) && customFilterProperties.getTraceIdEnable()) {
             // 当请求来源不为网关或其他同源微服务，禁止通行
             log.warn("#doFilter, source error, method: {}, uri: {}, contentType: {}", method, uri, contentType);
             ResponseUtils.outputJson(response, HttpStatus.FORBIDDEN.value(), DefaultResponse.fail(ReturnCodeEnum.CLIENT_ERROR));

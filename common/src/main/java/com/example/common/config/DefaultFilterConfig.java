@@ -18,14 +18,14 @@ public class DefaultFilterConfig {
 
     /**
      * URL 过滤器注册
-     * @return
+     * @return 过滤器注册实例
      */
     @Bean
-    public FilterRegistrationBean urlFilterRegistrationBean() {
-        FilterRegistrationBean<DefaultFilter> registrationBean = new FilterRegistrationBean();
+    public FilterRegistrationBean<DefaultFilter> urlFilterRegistrationBean() {
+        FilterRegistrationBean<DefaultFilter> registrationBean = new FilterRegistrationBean<>();
         registrationBean.setFilter(new DefaultFilter(customFilterProperties));
         registrationBean.setOrder(Ordered.HIGHEST_PRECEDENCE);
-        registrationBean.addUrlPatterns(new String[] {"/*"});
+        registrationBean.addUrlPatterns("/*");
         return registrationBean;
     }
 }

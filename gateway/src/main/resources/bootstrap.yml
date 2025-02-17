@@ -64,10 +64,6 @@ spring:
           predicates:
             - Path=/test/main/{param}
 
-logging:
-  pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} -%5p ${PID:- } [%15.15t] - [${spring.application.name}, %X{traceId:-}, %X{spanId:-}] %-40.40logger{39} %line: %m%n"
-
 # 自定义配置
 custom:
   gateway:
